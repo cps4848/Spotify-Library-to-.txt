@@ -12,18 +12,13 @@
         pkgs = import nixpkgs {
           inherit system;
         };
-        python-pkgs = p: with p; [
-          poetry-core
-        ];
       in
       with pkgs;
       {
         devShells.default = pkgs.mkShell rec {
-          nativeBuildInputs = [
-          ];
-          
           buildInputs = [
             python38
+            python38Packages.pip
             poetry
           ];
         };
