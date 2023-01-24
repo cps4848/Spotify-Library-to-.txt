@@ -33,7 +33,7 @@ Edit the newly created `.env` file with your favorite editor. You must set your 
 #### Run the program
 
 ```sh
-python SaveSpotifyLibrary.py
+poetry run ./SaveSpotifyLibrary.py
 ```
 
 Execution may take a few minutes if you have a lot of playlists.
