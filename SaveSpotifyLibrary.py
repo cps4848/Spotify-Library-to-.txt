@@ -99,6 +99,7 @@ def main():
   username = assert_env("SPOTIFY_USERNAME")
   client_id = assert_env("SPOTIFY_CLIENT_ID")
   client_secret = assert_env("SPOTIFY_CLIENT_SECRET")
+  playlist_dir = os.getenv("PLAYLIST_DIRECTORY", "playlists")
 
   scope = 'playlist-read-private'
   redirect_uri = 'https://google.com/'
@@ -109,10 +110,15 @@ def main():
     redirect_uri=redirect_uri,
     scope=scope,
     username=username,
+    # this does not work in a few cases if `True`.
+    # (namely on repl.it)
+    # it is more portable to require the user to
+    # click/copy the generated link, then paste
+    # the code from the URL redirected to
     open_browser=False,
   )
 
-  # Erase cache and prompt for user permissions
+  # Erase cache and start OAuth flow
   try:
       token = util.prompt_for_user_token(
         oauth_manager=auth_man,
@@ -125,12 +131,11 @@ def main():
         show_dialog=False,
       )
 
-  # Create spotifyObject
-
+  # Create spotify API client
   spotify = spotipy.Spotify(auth=token)
 
   try:
-    os.mkdir("playlists")
+    os.mkdir(playlist_dir)
   except:
     pass
   # start iteration over all playlists in account
