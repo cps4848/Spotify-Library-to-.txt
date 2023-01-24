@@ -3,3 +3,6 @@
 
 # ensure credentials are never committed
 /.env
+
+# ignore default playlists directory
+/playlists
