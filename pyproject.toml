@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "python-template"
-version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+name = "spotify-library-dump"
+version = "0.2.0"
+description = "Creates a directory containing a .txt file for each playlist containing every song in the playlist"
+authors = ["Claudio Salcedo <claudito48@hotmail.de>", "Campbell Cole <cmcoleco@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.8.0,<3.9"
@@ -12,7 +12,7 @@ Flask = "^2.2.0"
 urllib3 = "^1.26.12"
 spotipy = "^2.20.0"
 python-slugify = "^6.1.2"
-
+python-dotenv = "^0.21.1"
 
 [tool.poetry.dev-dependencies]
 debugpy = "^1.6.2"

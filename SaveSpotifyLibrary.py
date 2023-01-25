@@ -12,10 +12,7 @@ import json
 import spotipy
 import spotipy.util as util
 from slugify import slugify
-
-# CLIENT ID: 6200f2eac11e430a989056cebd09cd1d
-# CLIENT SECRET: 18a76a04435f455ab08b9def12b2587e
-# USER ID: https://open.spotify.com/user/claudito48?si=3ddbf5a88faf4343
+from dotenv import load_dotenv
 
 def iterate_playlist(spotify: spotipy.Spotify, output_file: io.TextIOWrapper, playlist):
   print(f"Indexing {playlist['name']}...")
@@ -86,12 +83,25 @@ def iterate_playlists(spotify: spotipy.Spotify):
 
   print(f"Indexed {current_offset} playlists")
 
+# load a value from environment variables and exit if not found
+def assert_env(env: str) -> str:
+  value = os.getenv(env)
+  if value is None:
+    print(f"missing required environment variable: {env}")
+    exit(1)
+  value
+
 # Example main (This is my spotify username tho feel free to browse my fire lists haha)
 def main():
-  username = "claudito48"
+  # load variables from the .env file
+  load_dotenv()
+
+  username = assert_env("SPOTIFY_USERNAME")
+  client_id = assert_env("SPOTIFY_CLIENT_ID")
+  client_secret = assert_env("SPOTIFY_CLIENT_SECRET")
+  playlist_dir = os.getenv("PLAYLIST_DIRECTORY", "playlists")
+
   scope = 'playlist-read-private'
-  client_id = '6200f2eac11e430a989056cebd09cd1d'
-  client_secret = '18a76a04435f455ab08b9def12b2587e'
   redirect_uri = 'https://google.com/'
 
   auth_man = spotipy.oauth2.SpotifyOAuth(
@@ -100,10 +110,15 @@ def main():
     redirect_uri=redirect_uri,
     scope=scope,
     username=username,
+    # this does not work in a few cases if `True`.
+    # (namely on repl.it)
+    # it is more portable to require the user to
+    # click/copy the generated link, then paste
+    # the code from the URL redirected to
     open_browser=False,
   )
 
-  # Erase cache and prompt for user permissions
+  # Erase cache and start OAuth flow
   try:
       token = util.prompt_for_user_token(
         oauth_manager=auth_man,
@@ -116,12 +131,11 @@ def main():
         show_dialog=False,
       )
 
-  # Create spotifyObject
-
+  # Create spotify API client
   spotify = spotipy.Spotify(auth=token)
 
   try:
-    os.mkdir("playlists")
+    os.mkdir(playlist_dir)
   except:
     pass
   # start iteration over all playlists in account
